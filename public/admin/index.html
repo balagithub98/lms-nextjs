@@ -1,372 +1,101 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LMS Content Manager</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background: #f5f5f5;
-      line-height: 1.6;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      overflow: hidden;
-    }
-    .header {
-      background: #007bff;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    .content {
-      padding: 30px;
-    }
-    .section {
-      margin-bottom: 30px;
-      padding: 20px;
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      background: #f8f9fa;
-    }
-    .section h3 {
-      margin-top: 0;
-      color: #007bff;
-    }
-    .btn {
-      display: inline-block;
-      padding: 12px 24px;
-      background: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      margin: 5px;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .btn:hover {
-      background: #0056b3;
-    }
-    .btn-success {
-      background: #28a745;
-    }
-    .btn-success:hover {
-      background: #1e7e34;
-    }
-    .btn-warning {
-      background: #ffc107;
-      color: #212529;
-    }
-    .btn-warning:hover {
-      background: #e0a800;
-    }
-    .status {
-      padding: 10px;
-      border-radius: 5px;
-      margin: 10px 0;
-    }
-    .status.success {
-      background: #d4edda;
-      border: 1px solid #c3e6cb;
-      color: #155724;
-    }
-    .status.error {
-      background: #f8d7da;
-      border: 1px solid #f5c6cb;
-      color: #721c24;
-    }
-    .status.warning {
-      background: #fff3cd;
-      border: 1px solid #ffeaa7;
-      color: #856404;
-    }
-    .file-list {
-      background: white;
-      border: 1px solid #dee2e6;
-      border-radius: 5px;
-      padding: 15px;
-      margin: 10px 0;
-    }
-    .file-item {
-      padding: 8px 0;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .file-item:last-child {
-      border-bottom: none;
-    }
-    .file-path {
-      font-family: monospace;
-      color: #666;
-    }
-    .actions {
-      display: flex;
-      gap: 10px;
-    }
-    .actions a {
-      padding: 4px 8px;
-      font-size: 12px;
-      text-decoration: none;
-      border-radius: 3px;
-    }
-    .actions .edit {
-      background: #007bff;
-      color: white;
-    }
-    .actions .view {
-      background: #28a745;
-      color: white;
-    }
-    .actions .delete {
-      background: #dc3545;
-      color: white;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 500;
-    }
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1px solid #ced4da;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-    .form-group textarea {
-      height: 100px;
-      resize: vertical;
-    }
-    .hidden {
-      display: none;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h1>🎓 LMS Content Manager</h1>
-      <p>Manage your learning management system content</p>
-    </div>
-    
-    <div class="content">
-      <!-- Status Section -->
-      <div class="section">
-        <h3>📊 System Status</h3>
-        <div id="status-container">
-          <div class="status warning">
-            <strong>Loading...</strong> Checking system status...
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="section">
-        <h3>⚡ Quick Actions</h3>
-        <p>Common content management tasks:</p>
-        <button class="btn" onclick="refreshContent()">🔄 Refresh Content</button>
-        <button class="btn" onclick="showCreateForm()">➕ Create New Module</button>
-        <button class="btn" onclick="exportContent()">📤 Export Content</button>
-        <button class="btn btn-warning" onclick="showGitStatus()">📋 Git Status</button>
-      </div>
-
-      <!-- Content Browser -->
-      <div class="section">
-        <h3>📁 Content Browser</h3>
-        <div id="content-browser">
-          <div class="status warning">
-            <strong>Loading...</strong> Scanning content directory...
-          </div>
-        </div>
-      </div>
-
-      <!-- Create Module Form (Hidden by default) -->
-      <div id="create-form" class="section hidden">
-        <h3>➕ Create New Module</h3>
-        <form id="module-form">
-          <div class="form-group">
-            <label for="exam-slug">Exam Slug:</label>
-            <input type="text" id="exam-slug" placeholder="e.g., jee, neet" required>
-          </div>
-          <div class="form-group">
-            <label for="subject-slug">Subject Slug:</label>
-            <input type="text" id="subject-slug" placeholder="e.g., mathematics, physics" required>
-          </div>
-          <div class="form-group">
-            <label for="unit-slug">Unit Slug:</label>
-            <input type="text" id="unit-slug" placeholder="e.g., derivatives, mechanics" required>
-          </div>
-          <div class="form-group">
-            <label for="chapter-slug">Chapter Slug:</label>
-            <input type="text" id="chapter-slug" placeholder="e.g., basic-rules, kinematics" required>
-          </div>
-          <div class="form-group">
-            <label for="module-number">Module Number:</label>
-            <input type="number" id="module-number" min="1" value="1" required>
-          </div>
-          <div class="form-group">
-            <label for="module-title">Module Title:</label>
-            <input type="text" id="module-title" placeholder="e.g., Basic Derivative Rules" required>
-          </div>
-          <div class="form-group">
-            <label for="module-content">Content HTML:</label>
-            <textarea id="module-content" placeholder="Enter HTML content here..."></textarea>
-          </div>
-          <button type="submit" class="btn btn-success">Create Module</button>
-          <button type="button" class="btn" onclick="hideCreateForm()">Cancel</button>
-        </form>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Content Manager</title>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; background:#f5f5f5; }
+      .loading, .error { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background:#fff; padding:32px; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,.1); max-width:560px; }
+      .spinner { border:4px solid #f3f3f3; border-top:4px solid #007bff; border-radius:50%; width:40px; height:40px; animation: spin 1s linear infinite; margin:0 auto 16px; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .btn { display:inline-block; padding:10px 16px; background:#007bff; color:#fff; text-decoration:none; border-radius:6px; margin: 6px 4px; }
+      code { background:#f6f8fa; padding:2px 6px; border-radius:4px; }
+    </style>
+  </head>
+  <body>
+    <div id="nc-root">
+      <div class="loading">
+        <div class="spinner"></div>
+        <h2>Loading Decap CMS…</h2>
+        <p>Please wait while the CMS initializes.</p>
       </div>
     </div>
-  </div>
 
-  <script>
-    // Initialize the admin interface
-    document.addEventListener('DOMContentLoaded', function() {
-      checkSystemStatus();
-      loadContentBrowser();
-    });
+    <script>
+      (function () {
+        const CDN_SOURCES = [
+          "https://cdn.jsdelivr.net/npm/decap-cms@3/dist/decap-cms.js",
+          "https://unpkg.com/decap-cms@3/dist/decap-cms.js"
+        ];
+        const START = Date.now();
+        const TIMEOUT_MS = 15000; // 15s overall
 
-    // Check system status
-    async function checkSystemStatus() {
-      const statusContainer = document.getElementById('status-container');
-      
-      try {
-        // Check auth endpoint
-        const authResponse = await fetch('/api/test-auth');
-        const authData = await authResponse.json();
-        
-        let statusHtml = '<div class="status success"><strong>✅ System Online</strong><br>';
-        statusHtml += `Environment Variables: ${authData.hasClientId && authData.hasClientSecret ? '✅ Set' : '❌ Missing'}<br>`;
-        statusHtml += `Auth Endpoint: ✅ Working<br>`;
-        statusHtml += `Content Directory: ✅ Accessible<br>`;
-        statusHtml += '</div>';
-        
-        statusContainer.innerHTML = statusHtml;
-      } catch (error) {
-        statusContainer.innerHTML = `
-          <div class="status error">
-            <strong>❌ System Error</strong><br>
-            Failed to connect to backend: ${error.message}
-          </div>
-        `;
-      }
-    }
+        function showError(msg) {
+          const root = document.getElementById("nc-root");
+          root.innerHTML = `
+            <div class="error">
+              <h3>❌ Decap CMS Failed to Load</h3>
+              <p>${msg || "Unknown error."}</p>
+              <p><strong>Quick checks:</strong></p>
+              <ul style="text-align:left; font-size:14px; line-height:1.4">
+                <li>Open <code>/admin/config.yml</code> directly in the browser — it must be reachable.</li>
+                <li>Open <code>/api/auth</code> and confirm it redirects to GitHub.</li>
+                <li>Ensure your GitHub OAuth [Open Authorization] callback is <code>/api/auth/callback</code> and Vercel <code>OAUTH_REDIRECT_URI</code> matches exactly.</li>
+              </ul>
+              <a class="btn" href="/admin">↻ Reload</a>
+              <a class="btn" href="/admin/config.yml" target="_blank">Open config.yml</a>
+            </div>`;
+        }
 
-    // Load content browser
-    async function loadContentBrowser() {
-      const browserContainer = document.getElementById('content-browser');
-      
-      try {
-        // This would normally fetch from an API endpoint
-        // For now, show a static example
-        browserContainer.innerHTML = `
-          <div class="file-list">
-            <div class="file-item">
-              <div>
-                <strong>JEE Mathematics - Derivatives</strong><br>
-                <span class="file-path">data/jee/mathematics/derivatives/basic-rules/module-1/</span>
-              </div>
-              <div class="actions">
-                <a href="/jee/mathematics/derivatives/basic-rules/module-1" class="view">View</a>
-                <a href="#" class="edit">Edit</a>
-                <a href="#" class="delete">Delete</a>
-              </div>
-            </div>
-            <div class="file-item">
-              <div>
-                <strong>JEE Mathematics - Limits</strong><br>
-                <span class="file-path">data/jee/mathematics/limits/continuity/module-1/</span>
-              </div>
-              <div class="actions">
-                <a href="/jee/mathematics/limits/continuity/module-1" class="view">View</a>
-                <a href="#" class="edit">Edit</a>
-                <a href="#" class="delete">Delete</a>
-              </div>
-            </div>
-            <div class="file-item">
-              <div>
-                <strong>NEET Biology - Cell Biology</strong><br>
-                <span class="file-path">data/neet/biology/cell-biology/cell-structure/module-1/</span>
-              </div>
-              <div class="actions">
-                <a href="/neet/biology/cell-biology/cell-structure/module-1" class="view">View</a>
-                <a href="#" class="edit">Edit</a>
-                <a href="#" class="delete">Delete</a>
-              </div>
-            </div>
-          </div>
-          <p><em>💡 Tip: Click "View" to see the module, "Edit" to modify content, or "Delete" to remove.</em></p>
-        `;
-      } catch (error) {
-        browserContainer.innerHTML = `
-          <div class="status error">
-            <strong>❌ Failed to load content</strong><br>
-            ${error.message}
-          </div>
-        `;
-      }
-    }
+        function injectScript(src, onload, onerror) {
+          const s = document.createElement("script");
+          s.src = src;
+          s.async = true;
+          s.onload = onload;
+          s.onerror = onerror;
+          document.head.appendChild(s);
+        }
 
-    // Show create form
-    function showCreateForm() {
-      document.getElementById('create-form').classList.remove('hidden');
-    }
+        function tryNextSource(i) {
+          if (i >= CDN_SOURCES.length) {
+            showError("Could not load Decap from any CDN.");
+            return;
+          }
+          const src = CDN_SOURCES[i];
+          let loaded = false;
 
-    // Hide create form
-    function hideCreateForm() {
-      document.getElementById('create-form').classList.add('hidden');
-      document.getElementById('module-form').reset();
-    }
+          injectScript(
+            src,
+            () => {
+              loaded = true;
+              waitForCMS();
+            },
+            () => {
+              if (!loaded) tryNextSource(i + 1);
+            }
+          );
+        }
 
-    // Handle form submission
-    document.getElementById('module-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const formData = {
-        exam_slug: document.getElementById('exam-slug').value,
-        subject_slug: document.getElementById('subject-slug').value,
-        unit_slug: document.getElementById('unit-slug').value,
-        chapter_slug: document.getElementById('chapter-slug').value,
-        module_number: parseInt(document.getElementById('module-number').value),
-        title: document.getElementById('module-title').value,
-        content_html: document.getElementById('module-content').value
-      };
-      
-      // This would normally send to an API endpoint
-      alert('Module creation would be implemented here. Form data: ' + JSON.stringify(formData, null, 2));
-      hideCreateForm();
-    });
+        function waitForCMS() {
+          if (window.CMS) {
+            try {
+              window.CMS.init(); // uses /admin/config.yml by default
+            } catch (e) {
+              showError("Decap initialized but threw an error: " + (e && e.message ? e.message : e));
+            }
+            return;
+          }
+          if (Date.now() - START > TIMEOUT_MS) {
+            showError("Timeout waiting for Decap CMS to expose window.CMS.");
+            return;
+          }
+          setTimeout(waitForCMS, 150);
+        }
 
-    // Refresh content
-    function refreshContent() {
-      loadContentBrowser();
-      alert('Content refreshed!');
-    }
-
-    // Export content
-    function exportContent() {
-      alert('Export functionality would be implemented here.');
-    }
-
-    // Show git status
-    function showGitStatus() {
-      alert('Git status functionality would be implemented here.');
-    }
-  </script>
-</body>
+        tryNextSource(0);
+      })();
+    </script>
+  </body>
 </html>
