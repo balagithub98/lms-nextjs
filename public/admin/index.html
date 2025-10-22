@@ -4,45 +4,50 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content Manager</title>
+  <script src="https://unpkg.com/decap-cms@latest/dist/decap-cms.js"></script>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: 0;
       background: #f5f5f5;
     }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
+    .loading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
       background: white;
-      padding: 30px;
+      padding: 40px;
       border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
-    .status {
-      padding: 20px;
-      border-radius: 5px;
-      margin: 20px 0;
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #007bff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
     }
-    .info {
-      background: #e3f2fd;
-      border: 1px solid #bbdefb;
-      color: #1565c0;
-    }
-    .warning {
-      background: #fff3e0;
-      border: 1px solid #ffcc02;
-      color: #e65100;
-    }
-    .success {
-      background: #e8f5e8;
-      border: 1px solid #c8e6c9;
-      color: #2e7d32;
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
     .error {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       background: #ffebee;
       border: 1px solid #ffcdd2;
+      padding: 30px;
+      border-radius: 8px;
       color: #c62828;
+      max-width: 500px;
+      text-align: center;
     }
     .btn {
       display: inline-block;
@@ -53,91 +58,71 @@
       border-radius: 5px;
       margin: 10px 5px;
     }
-    .btn:hover {
-      background: #0056b3;
-    }
-    pre {
-      background: #f8f9fa;
-      padding: 15px;
-      border-radius: 5px;
-      overflow-x: auto;
-    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🔧 Decap CMS Setup Status</h1>
-    
-    <div class="status info">
-      <h3>📋 Setup Checklist</h3>
-      <p>Complete these steps to enable Decap CMS:</p>
-    </div>
-
-    <div class="status warning">
-      <h3>⚠️ GitHub OAuth Required</h3>
-      <p><strong>You need to set up GitHub OAuth for Decap CMS to work.</strong></p>
-      
-      <h4>Step 1: Create GitHub OAuth App</h4>
-      <ol>
-        <li>Go to <a href="https://github.com/settings/applications/new" target="_blank">GitHub OAuth Apps</a></li>
-        <li>Fill in the details:
-          <pre>Application name: LMS Content Manager
-Homepage URL: https://lms-nextjs-olive.vercel.app
-Authorization callback URL: https://lms-nextjs-olive.vercel.app/api/auth</pre>
-        </li>
-        <li>Copy the <strong>Client ID</strong> and <strong>Client Secret</strong></li>
-      </ol>
-
-      <h4>Step 2: Add Environment Variables to Vercel</h4>
-      <ol>
-        <li>Go to <a href="https://vercel.com/dashboard" target="_blank">Vercel Dashboard</a></li>
-        <li>Find your project → Settings → Environment Variables</li>
-        <li>Add these variables:
-          <pre>GITHUB_CLIENT_ID = [your client id]
-GITHUB_CLIENT_SECRET = [your client secret]</pre>
-        </li>
-        <li>Redeploy your project</li>
-      </ol>
-    </div>
-
-    <div class="status info">
-      <h3>🔗 Quick Links</h3>
-      <a href="https://github.com/settings/applications/new" class="btn" target="_blank">Create OAuth App</a>
-      <a href="https://vercel.com/dashboard" class="btn" target="_blank">Vercel Dashboard</a>
-      <a href="/admin" class="btn">Back to Admin</a>
-    </div>
-
-    <div class="status info">
-      <h3>📝 Current Status</h3>
-      <p><strong>Decap CMS is configured but waiting for GitHub OAuth setup.</strong></p>
-      <p>Once you complete the OAuth setup and redeploy, the CMS will work automatically.</p>
-    </div>
-
-    <div class="status success">
-      <h3>✅ What's Already Done</h3>
-      <ul>
-        <li>✅ Decap CMS interface created</li>
-        <li>✅ GitHub backend configured</li>
-        <li>✅ All collections defined (Exams, Subjects, Units, Chapters, Modules)</li>
-        <li>✅ OAuth endpoint created at /api/auth</li>
-        <li>✅ Admin redirect working</li>
-      </ul>
+  <div id="nc-root">
+    <div class="loading">
+      <div class="spinner"></div>
+      <h2>Loading Decap CMS...</h2>
+      <p>Please wait while the content management system initializes.</p>
     </div>
   </div>
 
   <script>
-    // Try to load Decap CMS after a delay
+    // Check if environment variables are set by testing the auth endpoint
+    fetch('/api/auth')
+      .then(response => {
+        if (response.ok) {
+          // Auth endpoint is working, Decap CMS should load
+          console.log('Auth endpoint is accessible');
+        } else {
+          throw new Error('Auth endpoint not accessible');
+        }
+      })
+      .catch(error => {
+        console.error('Auth setup issue:', error);
+        // Show error message if auth is not working
+        setTimeout(() => {
+          const root = document.getElementById('nc-root');
+          if (root && root.children.length === 1) {
+            root.innerHTML = `
+              <div class="error">
+                <h3>❌ Authentication Setup Issue</h3>
+                <p>Decap CMS cannot connect to GitHub. Please check:</p>
+                <ul style="text-align: left; margin: 20px 0;">
+                  <li>GitHub OAuth app is created</li>
+                  <li>Environment variables are set in Vercel</li>
+                  <li>Project has been redeployed after adding variables</li>
+                </ul>
+                <a href="/admin" class="btn">← Back to Admin</a>
+                <a href="https://vercel.com/dashboard" class="btn" target="_blank">Check Vercel Settings</a>
+              </div>
+            `;
+          }
+        }, 3000);
+      });
+
+    // Check if Decap CMS loaded successfully
     setTimeout(() => {
-      const script = document.createElement('script');
-      script.src = 'https://unpkg.com/decap-cms@latest/dist/decap-cms.js';
-      script.onload = () => {
-        console.log('Decap CMS loaded successfully');
-      };
-      script.onerror = () => {
-        console.log('Failed to load Decap CMS');
-      };
-      document.head.appendChild(script);
-    }, 2000);
+      const root = document.getElementById('nc-root');
+      if (root && root.children.length === 1) {
+        root.innerHTML = `
+          <div class="error">
+            <h3>❌ Decap CMS Failed to Load</h3>
+            <p>There was an issue loading the content management system.</p>
+            <p><strong>Possible solutions:</strong></p>
+            <ul style="text-align: left; margin: 20px 0;">
+              <li>Check if GitHub OAuth environment variables are set in Vercel</li>
+              <li>Verify the project has been redeployed after adding variables</li>
+              <li>Check browser console for specific errors</li>
+            </ul>
+            <a href="/admin" class="btn">← Back to Admin</a>
+            <a href="https://vercel.com/dashboard" class="btn" target="_blank">Check Vercel Settings</a>
+          </div>
+        `;
+      }
+    }, 10000);
   </script>
 </body>
 </html>
