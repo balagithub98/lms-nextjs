@@ -72,50 +72,48 @@
   <script>
     console.log('Starting Decap CMS initialization...');
     
-    // Wait for Decap CMS to load
-    let cmsLoaded = false;
-    let checkCount = 0;
-    const maxChecks = 20; // 10 seconds total
-    
-    const checkCMS = () => {
-      checkCount++;
-      console.log(`Checking Decap CMS... (${checkCount}/${maxChecks})`);
-      
-      // Check if Decap CMS has initialized
-      if (window.CMS && window.CMS.init) {
-        console.log('Decap CMS found, initializing...');
+    // Wait for the CMS script to load
+    function initCMS() {
+      if (window.CMS) {
+        console.log('Decap CMS script loaded, initializing...');
         try {
+          // Initialize with config file
           window.CMS.init();
-          cmsLoaded = true;
           console.log('Decap CMS initialized successfully');
-          return;
         } catch (error) {
           console.error('Error initializing Decap CMS:', error);
+          showError(error.message || 'Unknown error');
         }
-      }
-      
-      // Check if the CMS interface has loaded
-      const root = document.getElementById('nc-root');
-      if (root && root.children.length > 1) {
-        console.log('Decap CMS interface detected');
-        cmsLoaded = true;
-        return;
-      }
-      
-      if (checkCount < maxChecks) {
-        setTimeout(checkCMS, 500);
       } else {
-        console.error('Decap CMS failed to load after 10 seconds');
-        showError();
+        console.error('Decap CMS script not found');
+        showError('Decap CMS script not loaded');
       }
-    };
+    }
     
-    const showError = () => {
+    // Try to initialize immediately
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCMS);
+    } else {
+      initCMS();
+    }
+    
+    // Fallback timeout
+    setTimeout(() => {
+      const root = document.getElementById('nc-root');
+      if (root && root.children.length === 1) {
+        console.log('Decap CMS timeout, showing error...');
+        showError('Timeout waiting for Decap CMS to load');
+      }
+    }, 8000);
+    
+    function showError(errorMessage) {
       const root = document.getElementById('nc-root');
       root.innerHTML = `
         <div class="error">
           <h3>❌ Decap CMS Failed to Load</h3>
           <p>There was an issue loading the content management system.</p>
+          <p><strong>Error Details:</strong></p>
+          <p style="font-size: 12px; color: #666; margin: 10px 0; word-break: break-all;">${errorMessage || 'Unknown error'}</p>
           <p><strong>Debug Information:</strong></p>
           <ul style="text-align: left; margin: 20px 0; font-size: 12px;">
             <li>Environment variables: ✅ Set correctly</li>
@@ -127,15 +125,15 @@
             <li>Check browser console for specific errors</li>
             <li>Try refreshing the page</li>
             <li>Check if config.yml is accessible</li>
+            <li>Verify GitHub OAuth app settings</li>
+            <li>Ensure OAUTH_REDIRECT_URI is set in Vercel</li>
           </ul>
           <a href="/admin" class="btn">← Back to Admin</a>
           <a href="/admin/config.yml" class="btn" target="_blank">Check Config</a>
+          <a href="/api/test-auth" class="btn" target="_blank">Test Auth</a>
         </div>
       `;
-    };
-    
-    // Start checking after a short delay
-    setTimeout(checkCMS, 1000);
+    }
   </script>
 </body>
 </html>
