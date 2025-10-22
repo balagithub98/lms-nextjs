@@ -4,7 +4,25 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content Manager</title>
-  <script src="https://unpkg.com/decap-cms@latest/dist/decap-cms.js"></script>
+  <script src="https://unpkg.com/decap-cms@3.0.0/dist/decap-cms.js" onerror="loadFallbackScript()"></script>
+  <script>
+    function loadFallbackScript() {
+      console.log('Primary CDN failed, trying fallback...');
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/decap-cms@3.0.0/dist/decap-cms.js';
+      script.onload = function() {
+        console.log('Fallback script loaded');
+        if (window.CMS) {
+          window.CMS.init();
+        }
+      };
+      script.onerror = function() {
+        console.error('Both CDNs failed');
+        showError('Failed to load Decap CMS from any CDN');
+      };
+      document.head.appendChild(script);
+    }
+  </script>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -72,29 +90,50 @@
   <script>
     console.log('Starting Decap CMS initialization...');
     
+    // Check if script loaded successfully
+    function checkScriptLoaded() {
+      if (window.CMS) {
+        console.log('Decap CMS script loaded successfully');
+        return true;
+      }
+      return false;
+    }
+    
     // Wait for the CMS script to load
     function initCMS() {
-      if (window.CMS) {
-        console.log('Decap CMS script loaded, initializing...');
+      console.log('Attempting to initialize Decap CMS...');
+      
+      if (checkScriptLoaded()) {
+        console.log('Decap CMS script found, initializing...');
         try {
           // Initialize with config file
           window.CMS.init();
           console.log('Decap CMS initialized successfully');
         } catch (error) {
           console.error('Error initializing Decap CMS:', error);
-          showError(error.message || 'Unknown error');
+          showError('Initialization error: ' + (error.message || 'Unknown error'));
         }
       } else {
-        console.error('Decap CMS script not found');
-        showError('Decap CMS script not loaded');
+        console.error('Decap CMS script not found after loading');
+        showError('Decap CMS script failed to load from CDN');
       }
     }
     
-    // Try to initialize immediately
+    // Try multiple initialization approaches
+    function tryInit() {
+      if (checkScriptLoaded()) {
+        initCMS();
+      } else {
+        console.log('Script not ready, retrying...');
+        setTimeout(tryInit, 500);
+      }
+    }
+    
+    // Start initialization
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initCMS);
+      document.addEventListener('DOMContentLoaded', tryInit);
     } else {
-      initCMS();
+      tryInit();
     }
     
     // Fallback timeout
@@ -102,9 +141,9 @@
       const root = document.getElementById('nc-root');
       if (root && root.children.length === 1) {
         console.log('Decap CMS timeout, showing error...');
-        showError('Timeout waiting for Decap CMS to load');
+        showError('Timeout waiting for Decap CMS to load from CDN');
       }
-    }, 8000);
+    }, 10000);
     
     function showError(errorMessage) {
       const root = document.getElementById('nc-root');
@@ -136,4 +175,5 @@
     }
   </script>
 </body>
+</html>
 </html>
