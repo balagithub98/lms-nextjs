@@ -1,8 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const code = req.query.code as string | undefined;
-  const state = req.query.state as string | undefined;
+export default async function handler(req, res) {
+  const code = req.query.code;
+  const state = req.query.state;
 
   const cookie = req.headers.cookie || "";
   const cookieState = (cookie.match(/(?:^|;\s*)decap_state=([^;]+)/) || [])[1];
@@ -15,8 +13,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     method: "POST",
     headers: { Accept: "application/json", "Content-Type": "application/json" },
     body: JSON.stringify({
-      client_id: process.env.GITHUB_CLIENT_ID!,
-      client_secret: process.env.GITHUB_CLIENT_SECRET!,
+      client_id: process.env.GITHUB_CLIENT_ID,
+      client_secret: process.env.GITHUB_CLIENT_SECRET,
       code,
     }),
   });
