@@ -4,9 +4,140 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content Manager</title>
-  <script src="https://unpkg.com/decap-cms@latest/dist/decap-cms.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .status {
+      padding: 20px;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    .info {
+      background: #e3f2fd;
+      border: 1px solid #bbdefb;
+      color: #1565c0;
+    }
+    .warning {
+      background: #fff3e0;
+      border: 1px solid #ffcc02;
+      color: #e65100;
+    }
+    .success {
+      background: #e8f5e8;
+      border: 1px solid #c8e6c9;
+      color: #2e7d32;
+    }
+    .error {
+      background: #ffebee;
+      border: 1px solid #ffcdd2;
+      color: #c62828;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      margin: 10px 5px;
+    }
+    .btn:hover {
+      background: #0056b3;
+    }
+    pre {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+  </style>
 </head>
 <body>
-  <!-- Decap CMS will automatically initialize -->
+  <div class="container">
+    <h1>🔧 Decap CMS Setup Status</h1>
+    
+    <div class="status info">
+      <h3>📋 Setup Checklist</h3>
+      <p>Complete these steps to enable Decap CMS:</p>
+    </div>
+
+    <div class="status warning">
+      <h3>⚠️ GitHub OAuth Required</h3>
+      <p><strong>You need to set up GitHub OAuth for Decap CMS to work.</strong></p>
+      
+      <h4>Step 1: Create GitHub OAuth App</h4>
+      <ol>
+        <li>Go to <a href="https://github.com/settings/applications/new" target="_blank">GitHub OAuth Apps</a></li>
+        <li>Fill in the details:
+          <pre>Application name: LMS Content Manager
+Homepage URL: https://lms-nextjs-olive.vercel.app
+Authorization callback URL: https://lms-nextjs-olive.vercel.app/api/auth</pre>
+        </li>
+        <li>Copy the <strong>Client ID</strong> and <strong>Client Secret</strong></li>
+      </ol>
+
+      <h4>Step 2: Add Environment Variables to Vercel</h4>
+      <ol>
+        <li>Go to <a href="https://vercel.com/dashboard" target="_blank">Vercel Dashboard</a></li>
+        <li>Find your project → Settings → Environment Variables</li>
+        <li>Add these variables:
+          <pre>GITHUB_CLIENT_ID = [your client id]
+GITHUB_CLIENT_SECRET = [your client secret]</pre>
+        </li>
+        <li>Redeploy your project</li>
+      </ol>
+    </div>
+
+    <div class="status info">
+      <h3>🔗 Quick Links</h3>
+      <a href="https://github.com/settings/applications/new" class="btn" target="_blank">Create OAuth App</a>
+      <a href="https://vercel.com/dashboard" class="btn" target="_blank">Vercel Dashboard</a>
+      <a href="/admin" class="btn">Back to Admin</a>
+    </div>
+
+    <div class="status info">
+      <h3>📝 Current Status</h3>
+      <p><strong>Decap CMS is configured but waiting for GitHub OAuth setup.</strong></p>
+      <p>Once you complete the OAuth setup and redeploy, the CMS will work automatically.</p>
+    </div>
+
+    <div class="status success">
+      <h3>✅ What's Already Done</h3>
+      <ul>
+        <li>✅ Decap CMS interface created</li>
+        <li>✅ GitHub backend configured</li>
+        <li>✅ All collections defined (Exams, Subjects, Units, Chapters, Modules)</li>
+        <li>✅ OAuth endpoint created at /api/auth</li>
+        <li>✅ Admin redirect working</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Try to load Decap CMS after a delay
+    setTimeout(() => {
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/decap-cms@latest/dist/decap-cms.js';
+      script.onload = () => {
+        console.log('Decap CMS loaded successfully');
+      };
+      script.onerror = () => {
+        console.log('Failed to load Decap CMS');
+      };
+      document.head.appendChild(script);
+    }, 2000);
+  </script>
 </body>
 </html>
