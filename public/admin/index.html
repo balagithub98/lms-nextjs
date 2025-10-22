@@ -7,90 +7,66 @@
     <title>Content Manager</title>
     <style>
       body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; background:#f5f5f5; }
-      .loading, .error { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; }
+      .loading { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; }
       .card { background:#fff; padding:28px; border-radius:10px; box-shadow:0 6px 24px rgba(0,0,0,.12); width:min(560px,92vw); }
       .spinner { border:4px solid #f3f3f3; border-top:4px solid #007bff; border-radius:50%; width:40px; height:40px; animation: spin 1s linear infinite; margin:0 auto 16px; }
       @keyframes spin { to { transform: rotate(360deg); } }
       .btn { display:inline-block; padding:10px 16px; background:#007bff; color:#fff; text-decoration:none; border-radius:6px; margin-top:12px; }
-      code { background:#f6f8fa; padding:2px 6px; border-radius:4px; }
     </style>
+
+    <script>
+      // Tell Decap not to auto-initialize; we will do it once ourselves.
+      window.CMS_MANUAL_INIT = true;
+    </script>
+
+    <!-- Prefer pinning to a major or exact version; avoid a URL with an encoded caret -->
+    <script src="https://cdn.jsdelivr.net/npm/decap-cms@3/dist/decap-cms.js" defer></script>
+    <script>
+      // Fallback to unpkg if jsDelivr fails
+      (function ensureBundle() {
+        const start = Date.now();
+        const timeout = 15000;
+        let fallbackLoaded = false;
+
+        function initOnce() {
+          if (!window.CMS || fallbackLoaded === 'done') return;
+          fallbackLoaded = 'done';
+          try { window.CMS.init(); } catch (e) { console.error("Decap init error:", e); }
+          const loader = document.getElementById("loader");
+          if (loader) loader.style.display = "none";
+        }
+
+        // If the first script failed, inject fallback
+        window.addEventListener("error", function onErr(ev) {
+          if (ev && ev.target && ev.target.src && ev.target.src.includes("decap-cms")) {
+            const s = document.createElement("script");
+            s.src = "https://unpkg.com/decap-cms@3/dist/decap-cms.js";
+            s.defer = true;
+            s.onload = initOnce;
+            document.head.appendChild(s);
+          }
+        }, true);
+
+        // Poll until CMS exists, then init once
+        const t = setInterval(function () {
+          if (window.CMS) { clearInterval(t); initOnce(); }
+          if (Date.now() - start > timeout) { clearInterval(t); console.error("Decap timed out"); }
+        }, 120);
+      })();
+    </script>
   </head>
   <body>
-    <!-- Decap mounts here. We don't touch this element once CMS starts. -->
+    <!-- Decap mounts here; we never remove/replace it -->
     <div id="nc-root"></div>
 
-    <!-- Lightweight pre-init overlay; we will just hide it (not remove children) -->
+    <!-- Simple loader we only hide (not remove) -->
     <div id="loader" class="loading">
       <div class="card">
         <div class="spinner"></div>
         <h2 style="margin:0 0 8px">Loading Decap CMS…</h2>
         <p style="margin:0;opacity:.8">Please wait while the CMS initializes.</p>
+        <a class="btn" href="/admin/config.yml" target="_blank">Open config.yml</a>
       </div>
     </div>
-
-    <script>
-      (function () {
-        const SOURCES = [
-          "https://cdn.jsdelivr.net/npm/decap-cms@^3/dist/decap-cms.js",
-          "https://unpkg.com/decap-cms@^3/dist/decap-cms.js"
-        ];
-        let started = false;     // prevent double init
-        let scriptLoaded = false;
-
-        function hideLoader() {
-          const el = document.getElementById("loader");
-          if (el) el.style.display = "none"; // hide; don't remove children
-        }
-
-        function showError(msg) {
-          const el = document.getElementById("loader");
-          if (!el) return;
-          el.innerHTML = '<div class="card"><h3>❌ Decap failed to load</h3><p style="opacity:.85"></p><a class="btn" href="/admin">Reload</a></div>';
-          el.querySelector("p").textContent = msg || "Unknown error.";
-        }
-
-        function safeInit() {
-          if (started) return;
-          if (!window.CMS) return;
-          started = true;
-          try {
-            window.CMS.init();     // uses /admin/config.yml by default
-            hideLoader();
-          } catch (e) {
-            showError("Init error: " + (e && e.message ? e.message : e));
-          }
-        }
-
-        function inject(i) {
-          if (i >= SOURCES.length) {
-            showError("Could not load Decap from any CDN.");
-            return;
-          }
-          const s = document.createElement("script");
-          s.src = SOURCES[i];
-          s.async = true;
-          s.onload = function () { scriptLoaded = true; safeInit(); };
-          s.onerror = function () { inject(i + 1); };
-          document.head.appendChild(s);
-        }
-
-        // Keep polling briefly until CMS appears, then init once.
-        const t = setInterval(function(){
-          if (window.CMS) {
-            clearInterval(t);
-            safeInit();
-          }
-        }, 120);
-
-        // Hard timeout guard
-        setTimeout(function(){
-          if (!scriptLoaded || !window.CMS) {
-            showError("Timeout waiting for Decap CMS to load from CDN.");
-          }
-        }, 15000);
-
-        inject(0);
-      })();
-    </script>
   </body>
 </html>
