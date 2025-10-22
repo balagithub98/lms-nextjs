@@ -1,0 +1,112 @@
+import { useEffect } from 'react'
+
+export default function AdminPage() {
+  useEffect(() => {
+    // Load Decap CMS
+    if (typeof window !== 'undefined') {
+      import('decap-cms-app').then((CMS) => {
+        CMS.init({
+          config: {
+            backend: {
+              name: 'git-gateway',
+              branch: 'main'
+            },
+            media_folder: "public/uploads",
+            public_folder: "/uploads",
+            collections: [
+              {
+                name: "exams",
+                label: "Exams",
+                folder: "data",
+                create: true,
+                slug: "{{slug}}",
+                fields: [
+                  {label: "Name", name: "name", widget: "string"},
+                  {label: "Slug", name: "slug", widget: "string", hint: "Auto-generated from name"}
+                ]
+              },
+              {
+                name: "subjects",
+                label: "Subjects",
+                folder: "data/{{exam_slug}}",
+                create: true,
+                slug: "{{slug}}",
+                fields: [
+                  {label: "Exam", name: "exam_slug", widget: "relation", collection: "exams", value_field: "slug", display_fields: ["name"]},
+                  {label: "Name", name: "name", widget: "string"},
+                  {label: "Slug", name: "slug", widget: "string", hint: "Auto-generated from name"}
+                ]
+              },
+              {
+                name: "units",
+                label: "Units",
+                folder: "data/{{exam_slug}}/{{subject_slug}}",
+                create: true,
+                slug: "{{slug}}",
+                fields: [
+                  {label: "Exam", name: "exam_slug", widget: "relation", collection: "exams", value_field: "slug", display_fields: ["name"]},
+                  {label: "Subject", name: "subject_slug", widget: "relation", collection: "subjects", value_field: "slug", display_fields: ["name"]},
+                  {label: "Name", name: "name", widget: "string"},
+                  {label: "Slug", name: "slug", widget: "string", hint: "Auto-generated from name"}
+                ]
+              },
+              {
+                name: "chapters",
+                label: "Chapters",
+                folder: "data/{{exam_slug}}/{{subject_slug}}/{{unit_slug}}",
+                create: true,
+                slug: "{{slug}}",
+                fields: [
+                  {label: "Exam", name: "exam_slug", widget: "relation", collection: "exams", value_field: "slug", display_fields: ["name"]},
+                  {label: "Subject", name: "subject_slug", widget: "relation", collection: "subjects", value_field: "slug", display_fields: ["name"]},
+                  {label: "Unit", name: "unit_slug", widget: "relation", collection: "units", value_field: "slug", display_fields: ["name"]},
+                  {label: "Name", name: "name", widget: "string"},
+                  {label: "Slug", name: "slug", widget: "string", hint: "Auto-generated from name"}
+                ]
+              },
+              {
+                name: "modules",
+                label: "Modules",
+                folder: "data/{{exam_slug}}/{{subject_slug}}/{{unit_slug}}/{{chapter_slug}}/module-{{module_number}}",
+                create: true,
+                slug: "index",
+                fields: [
+                  {label: "Exam", name: "exam_slug", widget: "relation", collection: "exams", value_field: "slug", display_fields: ["name"]},
+                  {label: "Subject", name: "subject_slug", widget: "relation", collection: "subjects", value_field: "slug", display_fields: ["name"]},
+                  {label: "Unit", name: "unit_slug", widget: "relation", collection: "units", value_field: "slug", display_fields: ["name"]},
+                  {label: "Chapter", name: "chapter_slug", widget: "relation", collection: "chapters", value_field: "slug", display_fields: ["name"]},
+                  {label: "Module Number", name: "module_number", widget: "number", hint: "Auto-generated based on existing modules"},
+                  {label: "Slug", name: "slug", widget: "string", hint: "Auto-generated as module-{number}"},
+                  {label: "Title", name: "title", widget: "string"},
+                  {label: "Content HTML", name: "content_html", widget: "code", default_language: "html"},
+                  {
+                    label: "MCQs",
+                    name: "mcqs",
+                    widget: "list",
+                    fields: [
+                      {label: "Question", name: "question", widget: "text"},
+                      {
+                        label: "Options",
+                        name: "options",
+                        widget: "list",
+                        field: {label: "Option", name: "option", widget: "string"}
+                      },
+                      {label: "Correct Answer (0-based index)", name: "answer", widget: "number", min: 0},
+                      {label: "Explanation", name: "explanation", widget: "text"}
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        })
+      })
+    }
+  }, [])
+
+  return (
+    <div>
+      <div id="nc-root"></div>
+    </div>
+  )
+}
