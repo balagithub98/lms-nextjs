@@ -1,98 +1,19 @@
-export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' })
-  }
+import type { NextApiRequest, NextApiResponse } from "next";
 
-  const { code, state } = req.query
+const AUTH_URL = "https://github.com/login/oauth/authorize";
 
-  if (!code) {
-    // Redirect to GitHub OAuth
-    const clientId = process.env.GITHUB_CLIENT_ID
-    const redirectUri = `${process.env.NEXTAUTH_URL || 'https://lms-nextjs-olive.vercel.app'}/api/auth`
-    const state = Math.random().toString(36).substring(7)
-    
-    const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=repo&state=${state}`
-    
-    return res.redirect(authUrl)
-  }
+export default function handler(_req: NextApiRequest, res: NextApiResponse) {
+  const clientId = process.env.GITHUB_CLIENT_ID!;
+  const redirectUri = process.env.OAUTH_REDIRECT_URI!;
+  const scope = "repo,user:email"; // or "public_repo,user:email" for public repos
+  const state = Math.random().toString(36).slice(2);
 
-  try {
-    // Exchange code for access token
-    const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        client_id: process.env.GITHUB_CLIENT_ID,
-        client_secret: process.env.GITHUB_CLIENT_SECRET,
-        code,
-      }),
-    })
+  // CSRF (Cross-Site Request Forgery) protection cookie
+  res.setHeader("Set-Cookie", `decap_state=${state}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`);
 
-    const tokenData = await tokenResponse.json()
-
-    if (tokenData.error) {
-      return res.status(400).json({ error: tokenData.error_description })
-    }
-
-    // Get user info
-    const userResponse = await fetch('https://api.github.com/user', {
-      headers: {
-        'Authorization': `token ${tokenData.access_token}`,
-        'Accept': 'application/vnd.github.v3+json',
-      },
-    })
-
-    const user = await userResponse.json()
-
-    // Return success page with token
-    return res.status(200).send(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Authentication Successful</title>
-        <style>
-          body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-          .success { color: #28a745; }
-          .loading { color: #007bff; }
-        </style>
-      </head>
-      <body>
-        <h1 class="success">✅ Authentication Successful!</h1>
-        <p>Welcome, ${user.login}!</p>
-        <p class="loading">Redirecting to Decap CMS...</p>
-        <script>
-          // Store token in localStorage for Decap CMS
-          localStorage.setItem('github_token', '${tokenData.access_token}');
-          // Redirect back to admin
-          setTimeout(() => {
-            window.location.href = '/admin/index.html';
-          }, 2000);
-        </script>
-      </body>
-      </html>
-    `)
-
-  } catch (error) {
-    console.error('GitHub OAuth error:', error)
-    res.status(500).send(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Authentication Failed</title>
-        <style>
-          body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-          .error { color: #dc3545; }
-        </style>
-      </head>
-      <body>
-        <h1 class="error">❌ Authentication Failed</h1>
-        <p>Please try again or contact support.</p>
-        <a href="/admin">← Back to Admin</a>
-      </body>
-      </html>
-    `)
-  }
+  res.redirect(
+    `${AUTH_URL}?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(
+      redirectUri
+    )}&scope=${encodeURIComponent(scope)}&state=${encodeURIComponent(state)}`
+  );
 }
