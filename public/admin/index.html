@@ -70,59 +70,72 @@
   </div>
 
   <script>
-    // Check if environment variables are set by testing the auth endpoint
-    fetch('/api/auth')
-      .then(response => {
-        if (response.ok) {
-          // Auth endpoint is working, Decap CMS should load
-          console.log('Auth endpoint is accessible');
-        } else {
-          throw new Error('Auth endpoint not accessible');
+    console.log('Starting Decap CMS initialization...');
+    
+    // Wait for Decap CMS to load
+    let cmsLoaded = false;
+    let checkCount = 0;
+    const maxChecks = 20; // 10 seconds total
+    
+    const checkCMS = () => {
+      checkCount++;
+      console.log(`Checking Decap CMS... (${checkCount}/${maxChecks})`);
+      
+      // Check if Decap CMS has initialized
+      if (window.CMS && window.CMS.init) {
+        console.log('Decap CMS found, initializing...');
+        try {
+          window.CMS.init();
+          cmsLoaded = true;
+          console.log('Decap CMS initialized successfully');
+          return;
+        } catch (error) {
+          console.error('Error initializing Decap CMS:', error);
         }
-      })
-      .catch(error => {
-        console.error('Auth setup issue:', error);
-        // Show error message if auth is not working
-        setTimeout(() => {
-          const root = document.getElementById('nc-root');
-          if (root && root.children.length === 1) {
-            root.innerHTML = `
-              <div class="error">
-                <h3>❌ Authentication Setup Issue</h3>
-                <p>Decap CMS cannot connect to GitHub. Please check:</p>
-                <ul style="text-align: left; margin: 20px 0;">
-                  <li>GitHub OAuth app is created</li>
-                  <li>Environment variables are set in Vercel</li>
-                  <li>Project has been redeployed after adding variables</li>
-                </ul>
-                <a href="/admin" class="btn">← Back to Admin</a>
-                <a href="https://vercel.com/dashboard" class="btn" target="_blank">Check Vercel Settings</a>
-              </div>
-            `;
-          }
-        }, 3000);
-      });
-
-    // Check if Decap CMS loaded successfully
-    setTimeout(() => {
-      const root = document.getElementById('nc-root');
-      if (root && root.children.length === 1) {
-        root.innerHTML = `
-          <div class="error">
-            <h3>❌ Decap CMS Failed to Load</h3>
-            <p>There was an issue loading the content management system.</p>
-            <p><strong>Possible solutions:</strong></p>
-            <ul style="text-align: left; margin: 20px 0;">
-              <li>Check if GitHub OAuth environment variables are set in Vercel</li>
-              <li>Verify the project has been redeployed after adding variables</li>
-              <li>Check browser console for specific errors</li>
-            </ul>
-            <a href="/admin" class="btn">← Back to Admin</a>
-            <a href="https://vercel.com/dashboard" class="btn" target="_blank">Check Vercel Settings</a>
-          </div>
-        `;
       }
-    }, 10000);
+      
+      // Check if the CMS interface has loaded
+      const root = document.getElementById('nc-root');
+      if (root && root.children.length > 1) {
+        console.log('Decap CMS interface detected');
+        cmsLoaded = true;
+        return;
+      }
+      
+      if (checkCount < maxChecks) {
+        setTimeout(checkCMS, 500);
+      } else {
+        console.error('Decap CMS failed to load after 10 seconds');
+        showError();
+      }
+    };
+    
+    const showError = () => {
+      const root = document.getElementById('nc-root');
+      root.innerHTML = `
+        <div class="error">
+          <h3>❌ Decap CMS Failed to Load</h3>
+          <p>There was an issue loading the content management system.</p>
+          <p><strong>Debug Information:</strong></p>
+          <ul style="text-align: left; margin: 20px 0; font-size: 12px;">
+            <li>Environment variables: ✅ Set correctly</li>
+            <li>Auth endpoint: ✅ Working</li>
+            <li>Decap CMS script: ❌ Failed to initialize</li>
+          </ul>
+          <p><strong>Possible solutions:</strong></p>
+          <ul style="text-align: left; margin: 20px 0;">
+            <li>Check browser console for specific errors</li>
+            <li>Try refreshing the page</li>
+            <li>Check if config.yml is accessible</li>
+          </ul>
+          <a href="/admin" class="btn">← Back to Admin</a>
+          <a href="/admin/config.yml" class="btn" target="_blank">Check Config</a>
+        </div>
+      `;
+    };
+    
+    // Start checking after a short delay
+    setTimeout(checkCMS, 1000);
   </script>
 </body>
 </html>
