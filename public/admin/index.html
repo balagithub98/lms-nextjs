@@ -7,94 +7,89 @@
     <title>Content Manager</title>
     <style>
       body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; background:#f5f5f5; }
-      .loading, .error { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background:#fff; padding:32px; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,.1); max-width:560px; }
+      .loading, .error { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; }
+      .card { background:#fff; padding:28px; border-radius:10px; box-shadow:0 6px 24px rgba(0,0,0,.12); width:min(560px,92vw); }
       .spinner { border:4px solid #f3f3f3; border-top:4px solid #007bff; border-radius:50%; width:40px; height:40px; animation: spin 1s linear infinite; margin:0 auto 16px; }
       @keyframes spin { to { transform: rotate(360deg); } }
-      .btn { display:inline-block; padding:10px 16px; background:#007bff; color:#fff; text-decoration:none; border-radius:6px; margin: 6px 4px; }
+      .btn { display:inline-block; padding:10px 16px; background:#007bff; color:#fff; text-decoration:none; border-radius:6px; margin-top:12px; }
       code { background:#f6f8fa; padding:2px 6px; border-radius:4px; }
     </style>
   </head>
   <body>
-    <div id="nc-root">
-      <div class="loading">
+    <!-- Decap mounts here. We don't touch this element once CMS starts. -->
+    <div id="nc-root"></div>
+
+    <!-- Lightweight pre-init overlay; we will just hide it (not remove children) -->
+    <div id="loader" class="loading">
+      <div class="card">
         <div class="spinner"></div>
-        <h2>Loading Decap CMS…</h2>
-        <p>Please wait while the CMS initializes.</p>
+        <h2 style="margin:0 0 8px">Loading Decap CMS…</h2>
+        <p style="margin:0;opacity:.8">Please wait while the CMS initializes.</p>
       </div>
     </div>
 
     <script>
       (function () {
-        const CDN_SOURCES = [
-          "https://cdn.jsdelivr.net/npm/decap-cms@3/dist/decap-cms.js",
-          "https://unpkg.com/decap-cms@3/dist/decap-cms.js"
+        const SOURCES = [
+          "https://cdn.jsdelivr.net/npm/decap-cms@^3/dist/decap-cms.js",
+          "https://unpkg.com/decap-cms@^3/dist/decap-cms.js"
         ];
-        const START = Date.now();
-        const TIMEOUT_MS = 15000; // 15s overall
+        let started = false;     // prevent double init
+        let scriptLoaded = false;
+
+        function hideLoader() {
+          const el = document.getElementById("loader");
+          if (el) el.style.display = "none"; // hide; don't remove children
+        }
 
         function showError(msg) {
-          const root = document.getElementById("nc-root");
-          root.innerHTML = `
-            <div class="error">
-              <h3>❌ Decap CMS Failed to Load</h3>
-              <p>${msg || "Unknown error."}</p>
-              <p><strong>Quick checks:</strong></p>
-              <ul style="text-align:left; font-size:14px; line-height:1.4">
-                <li>Open <code>/admin/config.yml</code> directly in the browser — it must be reachable.</li>
-                <li>Open <code>/api/auth</code> and confirm it redirects to GitHub.</li>
-                <li>Ensure your GitHub OAuth [Open Authorization] callback is <code>/api/auth/callback</code> and Vercel <code>OAUTH_REDIRECT_URI</code> matches exactly.</li>
-              </ul>
-              <a class="btn" href="/admin">↻ Reload</a>
-              <a class="btn" href="/admin/config.yml" target="_blank">Open config.yml</a>
-            </div>`;
+          const el = document.getElementById("loader");
+          if (!el) return;
+          el.innerHTML = '<div class="card"><h3>❌ Decap failed to load</h3><p style="opacity:.85"></p><a class="btn" href="/admin">Reload</a></div>';
+          el.querySelector("p").textContent = msg || "Unknown error.";
         }
 
-        function injectScript(src, onload, onerror) {
-          const s = document.createElement("script");
-          s.src = src;
-          s.async = true;
-          s.onload = onload;
-          s.onerror = onerror;
-          document.head.appendChild(s);
+        function safeInit() {
+          if (started) return;
+          if (!window.CMS) return;
+          started = true;
+          try {
+            window.CMS.init();     // uses /admin/config.yml by default
+            hideLoader();
+          } catch (e) {
+            showError("Init error: " + (e && e.message ? e.message : e));
+          }
         }
 
-        function tryNextSource(i) {
-          if (i >= CDN_SOURCES.length) {
+        function inject(i) {
+          if (i >= SOURCES.length) {
             showError("Could not load Decap from any CDN.");
             return;
           }
-          const src = CDN_SOURCES[i];
-          let loaded = false;
-
-          injectScript(
-            src,
-            () => {
-              loaded = true;
-              waitForCMS();
-            },
-            () => {
-              if (!loaded) tryNextSource(i + 1);
-            }
-          );
+          const s = document.createElement("script");
+          s.src = SOURCES[i];
+          s.async = true;
+          s.onload = function () { scriptLoaded = true; safeInit(); };
+          s.onerror = function () { inject(i + 1); };
+          document.head.appendChild(s);
         }
 
-        function waitForCMS() {
+        // Keep polling briefly until CMS appears, then init once.
+        const t = setInterval(function(){
           if (window.CMS) {
-            try {
-              window.CMS.init(); // uses /admin/config.yml by default
-            } catch (e) {
-              showError("Decap initialized but threw an error: " + (e && e.message ? e.message : e));
-            }
-            return;
+            clearInterval(t);
+            safeInit();
           }
-          if (Date.now() - START > TIMEOUT_MS) {
-            showError("Timeout waiting for Decap CMS to expose window.CMS.");
-            return;
-          }
-          setTimeout(waitForCMS, 150);
-        }
+        }, 120);
 
-        tryNextSource(0);
+        // Hard timeout guard
+        setTimeout(function(){
+          if (!scriptLoaded || !window.CMS) {
+            showError("Timeout waiting for Decap CMS to load from CDN.");
+          }
+        }, 15000);
+
+        inject(0);
       })();
     </script>
   </body>
