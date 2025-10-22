@@ -4,6 +4,7 @@ backend:
   branch: main
   base_url: https://lms-nextjs-olive.vercel.app
   auth_endpoint: /api/auth
+  auth_type: implicit
 
 media_folder: "public/uploads"
 public_folder: "/uploads"

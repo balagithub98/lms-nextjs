@@ -24,6 +24,8 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Token exchange failed", details: tokenJson });
   }
 
-  res.setHeader("Content-Type", "application/json");
-  res.send(JSON.stringify({ token: tokenJson.access_token }));
+  // For Decap CMS, we need to redirect back to the admin page with the token
+  // Decap CMS expects the token in the URL hash
+  const redirectUrl = `/admin/index.html#access_token=${tokenJson.access_token}&token_type=Bearer`;
+  res.redirect(redirectUrl);
 }
