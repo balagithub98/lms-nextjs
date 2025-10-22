@@ -6,7 +6,7 @@
   "module_number": 2,
   "slug": "module-2",
   "title": "Advanced Continuity Concepts",
-  "content_html": "<h1>Advanced Continuity Concepts</h1><p>This module explores more complex aspects of continuity and their applications.</p><h2>Types of Discontinuities</h2><p>There are three main types of discontinuities:</p><ul><li><strong>Removable discontinuity:</strong> The limit exists but doesn't equal the function value</li><li><strong>Jump discontinuity:</strong> Left and right limits exist but are different</li><li><strong>Infinite discontinuity:</strong> The limit approaches infinity</li></ul><h2>Continuity on Intervals</h2><p>A function is continuous on an interval if it's continuous at every point in that interval.</p><h2>Intermediate Value Theorem</h2><p>If f is continuous on [a,b] and k is between f(a) and f(b), then there exists c in (a,b) such that f(c) = k.</p>",
+  "content_html": "<p>This module explores more complex aspects of continuity and their applications.</p><h2>Types of Discontinuities</h2><p>There are three main types of discontinuities:</p><ul><li><strong>Removable discontinuity:</strong> The limit exists but doesn't equal the function value</li><li><strong>Jump discontinuity:</strong> Left and right limits exist but are different</li><li><strong>Infinite discontinuity:</strong> The limit approaches infinity</li></ul><h2>Continuity on Intervals</h2><p>A function is continuous on an interval if it's continuous at every point in that interval.</p><h2>Intermediate Value Theorem</h2><p>If f is continuous on [a,b] and k is between f(a) and f(b), then there exists c in (a,b) such that f(c) = k.</p>",
   "mcqs": [
     {
       "question": "What type of discontinuity does f(x) = (x²-1)/(x-1) have at x = 1?",

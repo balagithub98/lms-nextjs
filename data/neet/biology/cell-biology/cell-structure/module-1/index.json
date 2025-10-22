@@ -6,7 +6,7 @@
   "module_number": 1,
   "slug": "module-1",
   "title": "Cell Structure and Organelles",
-  "content_html": "<h1>Cell Structure and Organelles</h1><p>All living organisms are composed of cells, which are the basic structural and functional units of life.</p><h2>Cell Theory</h2><ul><li>All living things are composed of cells</li><li>Cells are the basic units of structure and function</li><li>New cells arise from existing cells</li></ul><h2>Major Organelles</h2><ul><li><strong>Nucleus:</strong> Contains genetic material (DNA)</li><li><strong>Mitochondria:</strong> Powerhouse of the cell, produces ATP</li><li><strong>Endoplasmic Reticulum:</strong> Protein synthesis and transport</li><li><strong>Golgi Apparatus:</strong> Protein modification and packaging</li><li><strong>Ribosomes:</strong> Protein synthesis</li></ul>",
+  "content_html": "<p>All living organisms are composed of cells, which are the basic structural and functional units of life.</p><h2>Cell Theory</h2><ul><li>All living things are composed of cells</li><li>Cells are the basic units of structure and function</li><li>New cells arise from existing cells</li></ul><h2>Major Organelles</h2><ul><li><strong>Nucleus:</strong> Contains genetic material (DNA)</li><li><strong>Mitochondria:</strong> Powerhouse of the cell, produces ATP</li><li><strong>Endoplasmic Reticulum:</strong> Protein synthesis and transport</li><li><strong>Golgi Apparatus:</strong> Protein modification and packaging</li><li><strong>Ribosomes:</strong> Protein synthesis</li></ul>",
   "mcqs": [
     {
       "question": "Which organelle is known as the powerhouse of the cell?",

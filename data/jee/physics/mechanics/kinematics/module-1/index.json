@@ -6,7 +6,7 @@
   "module_number": 1,
   "slug": "module-1",
   "title": "Introduction to Kinematics",
-  "content_html": "<h1>Introduction to Kinematics</h1><p>Kinematics is the branch of physics that describes the motion of objects without considering the forces that cause the motion.</p><h2>Key Concepts</h2><ul><li><strong>Displacement:</strong> The change in position of an object</li><li><strong>Velocity:</strong> The rate of change of displacement</li><li><strong>Acceleration:</strong> The rate of change of velocity</li></ul><h2>Equations of Motion</h2><p>For uniformly accelerated motion:</p><ul><li>v = u + at</li><li>s = ut + ½at²</li><li>v² = u² + 2as</li></ul><p>Where:<br>v = final velocity<br>u = initial velocity<br>a = acceleration<br>t = time<br>s = displacement</p>",
+  "content_html": "<p>Kinematics is the branch of physics that describes the motion of objects without considering the forces that cause the motion.</p><h2>Key Concepts</h2><ul><li><strong>Displacement:</strong> The change in position of an object</li><li><strong>Velocity:</strong> The rate of change of displacement</li><li><strong>Acceleration:</strong> The rate of change of velocity</li></ul><h2>Equations of Motion</h2><p>For uniformly accelerated motion:</p><ul><li>v = u + at</li><li>s = ut + ½at²</li><li>v² = u² + 2as</li></ul><p>Where:<br>v = final velocity<br>u = initial velocity<br>a = acceleration<br>t = time<br>s = displacement</p>",
   "mcqs": [
     {
       "question": "What is the displacement of an object that moves from position x₁ = 5m to x₂ = 12m?",
