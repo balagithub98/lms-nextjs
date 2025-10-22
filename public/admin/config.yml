@@ -21,7 +21,13 @@ collections:
     create: true
     slug: "{{slug}}"
     fields:
-      - {label: "Exam", name: "exam_slug", widget: "relation", collection: "exams", value_field: "slug", display_fields: ["name"]}
+      - label: "Exam"
+        name: "exam_slug"
+        widget: "relation"
+        collection: "exams"
+        valueField: "slug"
+        searchFields: ["name"]
+        displayFields: ["name"]
       - {label: "Name", name: "name", widget: "string"}
       - {label: "Slug", name: "slug", widget: "string", hint: "Auto-generated from name"}
 
@@ -31,8 +37,20 @@ collections:
     create: true
     slug: "{{slug}}"
     fields:
-      - {label: "Exam", name: "exam_slug", widget: "relation", collection: "exams", value_field: "slug", display_fields: ["name"]}
-      - {label: "Subject", name: "subject_slug", widget: "relation", collection: "subjects", value_field: "slug", display_fields: ["name"]}
+      - label: "Exam"
+        name: "exam_slug"
+        widget: "relation"
+        collection: "exams"
+        valueField: "slug"
+        searchFields: ["name"]
+        displayFields: ["name"]
+      - label: "Subject"
+        name: "subject_slug"
+        widget: "relation"
+        collection: "subjects"
+        valueField: "slug"
+        searchFields: ["name"]
+        displayFields: ["name"]
       - {label: "Name", name: "name", widget: "string"}
       - {label: "Slug", name: "slug", widget: "string", hint: "Auto-generated from name"}
 
@@ -42,9 +60,27 @@ collections:
     create: true
     slug: "{{slug}}"
     fields:
-      - {label: "Exam", name: "exam_slug", widget: "relation", collection: "exams", value_field: "slug", display_fields: ["name"]}
-      - {label: "Subject", name: "subject_slug", widget: "relation", collection: "subjects", value_field: "slug", display_fields: ["name"]}
-      - {label: "Unit", name: "unit_slug", widget: "relation", collection: "units", value_field: "slug", display_fields: ["name"]}
+      - label: "Exam"
+        name: "exam_slug"
+        widget: "relation"
+        collection: "exams"
+        valueField: "slug"
+        searchFields: ["name"]
+        displayFields: ["name"]
+      - label: "Subject"
+        name: "subject_slug"
+        widget: "relation"
+        collection: "subjects"
+        valueField: "slug"
+        searchFields: ["name"]
+        displayFields: ["name"]
+      - label: "Unit"
+        name: "unit_slug"
+        widget: "relation"
+        collection: "units"
+        valueField: "slug"
+        searchFields: ["name"]
+        displayFields: ["name"]
       - {label: "Name", name: "name", widget: "string"}
       - {label: "Slug", name: "slug", widget: "string", hint: "Auto-generated from name"}
 
@@ -54,10 +90,34 @@ collections:
     create: true
     slug: "index"
     fields:
-      - {label: "Exam", name: "exam_slug", widget: "relation", collection: "exams", value_field: "slug", display_fields: ["name"]}
-      - {label: "Subject", name: "subject_slug", widget: "relation", collection: "subjects", value_field: "slug", display_fields: ["name"]}
-      - {label: "Unit", name: "unit_slug", widget: "relation", collection: "units", value_field: "slug", display_fields: ["name"]}
-      - {label: "Chapter", name: "chapter_slug", widget: "relation", collection: "chapters", value_field: "slug", display_fields: ["name"]}
+      - label: "Exam"
+        name: "exam_slug"
+        widget: "relation"
+        collection: "exams"
+        valueField: "slug"
+        searchFields: ["name"]
+        displayFields: ["name"]
+      - label: "Subject"
+        name: "subject_slug"
+        widget: "relation"
+        collection: "subjects"
+        valueField: "slug"
+        searchFields: ["name"]
+        displayFields: ["name"]
+      - label: "Unit"
+        name: "unit_slug"
+        widget: "relation"
+        collection: "units"
+        valueField: "slug"
+        searchFields: ["name"]
+        displayFields: ["name"]
+      - label: "Chapter"
+        name: "chapter_slug"
+        widget: "relation"
+        collection: "chapters"
+        valueField: "slug"
+        searchFields: ["name"]
+        displayFields: ["name"]
       - {label: "Module Number", name: "module_number", widget: "number", hint: "Auto-generated based on existing modules"}
       - {label: "Slug", name: "slug", widget: "string", hint: "Auto-generated as module-{number}"}
       - {label: "Title", name: "title", widget: "string"}
