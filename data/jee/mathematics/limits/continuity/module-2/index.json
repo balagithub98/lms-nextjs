@@ -1,0 +1,29 @@
+{
+  "exam_slug": "jee",
+  "subject_slug": "mathematics",
+  "unit_slug": "limits",
+  "chapter_slug": "continuity",
+  "module_number": 2,
+  "slug": "module-2",
+  "title": "Advanced Continuity Concepts",
+  "content_html": "<h1>Advanced Continuity Concepts</h1><p>This module explores more complex aspects of continuity and their applications.</p><h2>Types of Discontinuities</h2><p>There are three main types of discontinuities:</p><ul><li><strong>Removable discontinuity:</strong> The limit exists but doesn't equal the function value</li><li><strong>Jump discontinuity:</strong> Left and right limits exist but are different</li><li><strong>Infinite discontinuity:</strong> The limit approaches infinity</li></ul><h2>Continuity on Intervals</h2><p>A function is continuous on an interval if it's continuous at every point in that interval.</p><h2>Intermediate Value Theorem</h2><p>If f is continuous on [a,b] and k is between f(a) and f(b), then there exists c in (a,b) such that f(c) = k.</p>",
+  "mcqs": [
+    {
+      "question": "What type of discontinuity does f(x) = (x²-1)/(x-1) have at x = 1?",
+      "options": ["Removable", "Jump", "Infinite", "None"],
+      "answer": 0,
+      "explanation": "The function can be simplified to f(x) = x + 1 for x ≠ 1, so it has a removable discontinuity."
+    },
+    {
+      "question": "According to the Intermediate Value Theorem, if f(1) = 2 and f(3) = 8, what can we conclude?",
+      "options": [
+        "f(2) = 5",
+        "There exists c in (1,3) such that f(c) = 5",
+        "f is continuous on [1,3]",
+        "None of the above"
+      ],
+      "answer": 1,
+      "explanation": "The IVT guarantees that for any value between f(1) and f(3), there exists a point c where f(c) equals that value."
+    }
+  ]
+}
