@@ -9,38 +9,66 @@ export default function AdminPage() {
         <h2>Content Management</h2>
         <p>This is a Git-based learning platform. To manage content:</p>
         
-        <div style={{ marginTop: '1rem', padding: '1rem', background: '#fff3cd', borderRadius: '5px', border: '1px solid #ffeaa7' }}>
-          <h3>⚠️ Decap CMS Setup Required</h3>
-          <p>For full CMS functionality, you need to set up GitHub OAuth:</p>
-          <ol style={{ marginTop: '0.5rem', paddingLeft: '1.5rem' }}>
-            <li>Create a GitHub OAuth App at <a href="https://github.com/settings/applications/new" target="_blank" style={{ color: '#007bff' }}>GitHub Settings</a></li>
-            <li>Set Authorization callback URL to: <code>https://lms-nextjs-olive.vercel.app/admin/index.html</code></li>
-            <li>Add environment variables in Vercel: <code>GITHUB_CLIENT_ID</code> and <code>GITHUB_CLIENT_SECRET</code></li>
-          </ol>
-          <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#856404' }}>
-            <strong>Alternative:</strong> Use the manual methods below for now.
-          </p>
+        <div style={{ marginTop: '1rem', padding: '1rem', background: '#d1ecf1', borderRadius: '5px', border: '1px solid #bee5eb' }}>
+          <h3>📝 Content Management Interface</h3>
+          <p>Use these methods to manage your learning content:</p>
+          <div style={{ marginTop: '1rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
+            <div style={{ padding: '1rem', background: '#ffffff', borderRadius: '5px', border: '1px solid #dee2e6' }}>
+              <h4>📁 File Structure</h4>
+              <p>Your content follows this hierarchy:</p>
+              <pre style={{ background: '#f8f9fa', padding: '0.5rem', borderRadius: '3px', fontSize: '0.8rem', overflow: 'auto' }}>
+{`/data/
+  /<exam>/
+    /<subject>/
+      /<unit>/
+        /<chapter>/
+          /module-<number>/
+            index.json`}
+              </pre>
+            </div>
+            <div style={{ padding: '1rem', background: '#ffffff', borderRadius: '5px', border: '1px solid #dee2e6' }}>
+              <h4>📄 JSON Format</h4>
+              <p>Each module has this structure:</p>
+              <pre style={{ background: '#f8f9fa', padding: '0.5rem', borderRadius: '3px', fontSize: '0.8rem', overflow: 'auto' }}>
+{`{
+  "exam_slug": "jee",
+  "subject_slug": "mathematics",
+  "unit_slug": "derivatives",
+  "chapter_slug": "basic-rules",
+  "module_number": 1,
+  "slug": "module-1",
+  "title": "Module Title",
+  "content_html": "<p>HTML content</p>",
+  "mcqs": [...]
+}`}
+              </pre>
+            </div>
+          </div>
         </div>
         
         <div style={{ marginTop: '1rem', padding: '1rem', background: '#f8f9fa', borderRadius: '5px' }}>
-          <h3>Option 1: Direct File Editing</h3>
-          <p>Edit JSON files directly in the repository:</p>
-          <ul>
-            <li>Navigate to the <code>/data</code> folder in your repository</li>
-            <li>Edit the JSON files for each module</li>
-            <li>Commit and push changes to update the site</li>
-          </ul>
-        </div>
-        
-        <div style={{ marginTop: '1rem', padding: '1rem', background: '#e3f2fd', borderRadius: '5px' }}>
-          <h3>Option 2: GitHub Web Interface</h3>
-          <p>Use GitHub's web interface to edit files:</p>
-          <ul>
-            <li>Go to your repository on GitHub</li>
-            <li>Navigate to the file you want to edit</li>
-            <li>Click the edit button (pencil icon)</li>
-            <li>Make your changes and commit</li>
-          </ul>
+          <h3>🛠️ Content Management Methods</h3>
+          <div style={{ marginTop: '1rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
+            <div style={{ padding: '1rem', background: '#ffffff', borderRadius: '5px', border: '1px solid #dee2e6' }}>
+              <h4>📝 Direct File Editing</h4>
+              <p>Edit JSON files directly in your repository:</p>
+              <ul style={{ fontSize: '0.9rem' }}>
+                <li>Navigate to the <code>/data</code> folder</li>
+                <li>Edit the JSON files for each module</li>
+                <li>Commit and push changes to update the site</li>
+              </ul>
+            </div>
+            <div style={{ padding: '1rem', background: '#ffffff', borderRadius: '5px', border: '1px solid #dee2e6' }}>
+              <h4>🌐 GitHub Web Interface</h4>
+              <p>Use GitHub's web interface to edit files:</p>
+              <ul style={{ fontSize: '0.9rem' }}>
+                <li>Go to your repository on GitHub</li>
+                <li>Navigate to the file you want to edit</li>
+                <li>Click the edit button (pencil icon)</li>
+                <li>Make your changes and commit</li>
+              </ul>
+            </div>
+          </div>
         </div>
         
         <div style={{ marginTop: '2rem' }}>
