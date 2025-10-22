@@ -1,0 +1,34 @@
+backend:
+  name: github
+  repo: balagithub98/lms-nextjs
+  branch: main
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "modules"
+    label: "Modules"
+    folder: "data"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Exam Slug", name: "exam_slug", widget: "string"}
+      - {label: "Subject Slug", name: "subject_slug", widget: "string"}
+      - {label: "Unit Slug", name: "unit_slug", widget: "string"}
+      - {label: "Chapter Slug", name: "chapter_slug", widget: "string"}
+      - {label: "Module Number", name: "module_number", widget: "number"}
+      - {label: "Slug", name: "slug", widget: "string"}
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Content HTML", name: "content_html", widget: "code", default_language: "html"}
+      - label: "MCQs"
+        name: "mcqs"
+        widget: "list"
+        fields:
+          - {label: "Question", name: "question", widget: "text"}
+          - label: "Options"
+            name: "options"
+            widget: "list"
+            field: {label: "Option", name: "option", widget: "string"}
+          - {label: "Correct Answer (0-based index)", name: "answer", widget: "number", min: 0}
+          - {label: "Explanation", name: "explanation", widget: "text"}
