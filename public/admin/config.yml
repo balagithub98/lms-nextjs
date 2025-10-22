@@ -2,6 +2,8 @@ backend:
   name: github
   repo: balagithub98/lms-nextjs
   branch: main
+  auth_type: implicit
+  auth_endpoint: https://lms-nextjs-olive.vercel.app/api/auth
 
 media_folder: "public/uploads"
 public_folder: "/uploads"
