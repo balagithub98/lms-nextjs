@@ -9,6 +9,29 @@ export default function AdminPage() {
         <h2>Content Management</h2>
         <p>This is a Git-based learning platform. To manage content:</p>
         
+        <div style={{ marginTop: '1rem', padding: '1rem', background: '#d4edda', borderRadius: '5px', border: '1px solid #c3e6cb' }}>
+          <h3>🎯 Decap CMS Interface</h3>
+          <p>Use the full-featured CMS interface for easy content management:</p>
+          <a 
+            href="/admin/index.html" 
+            target="_blank" 
+            style={{ 
+              display: 'inline-block', 
+              padding: '0.75rem 1.5rem', 
+              background: '#28a745', 
+              color: 'white', 
+              textDecoration: 'none', 
+              borderRadius: '5px',
+              marginTop: '0.5rem'
+            }}
+          >
+            Open Decap CMS →
+          </a>
+          <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#155724' }}>
+            <strong>Note:</strong> You'll need to authenticate with GitHub to use the CMS interface.
+          </p>
+        </div>
+        
         <div style={{ marginTop: '1rem', padding: '1rem', background: '#f8f9fa', borderRadius: '5px' }}>
           <h3>Option 1: Direct File Editing</h3>
           <p>Edit JSON files directly in the repository:</p>
