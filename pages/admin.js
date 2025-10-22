@@ -9,26 +9,16 @@ export default function AdminPage() {
         <h2>Content Management</h2>
         <p>This is a Git-based learning platform. To manage content:</p>
         
-        <div style={{ marginTop: '1rem', padding: '1rem', background: '#d4edda', borderRadius: '5px', border: '1px solid #c3e6cb' }}>
-          <h3>🎯 Decap CMS Interface</h3>
-          <p>Use the full-featured CMS interface for easy content management:</p>
-          <a 
-            href="/admin/index.html" 
-            target="_blank" 
-            style={{ 
-              display: 'inline-block', 
-              padding: '0.75rem 1.5rem', 
-              background: '#28a745', 
-              color: 'white', 
-              textDecoration: 'none', 
-              borderRadius: '5px',
-              marginTop: '0.5rem'
-            }}
-          >
-            Open Decap CMS →
-          </a>
-          <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#155724' }}>
-            <strong>Note:</strong> You'll need to authenticate with GitHub to use the CMS interface.
+        <div style={{ marginTop: '1rem', padding: '1rem', background: '#fff3cd', borderRadius: '5px', border: '1px solid #ffeaa7' }}>
+          <h3>⚠️ Decap CMS Setup Required</h3>
+          <p>For full CMS functionality, you need to set up GitHub OAuth:</p>
+          <ol style={{ marginTop: '0.5rem', paddingLeft: '1.5rem' }}>
+            <li>Create a GitHub OAuth App at <a href="https://github.com/settings/applications/new" target="_blank" style={{ color: '#007bff' }}>GitHub Settings</a></li>
+            <li>Set Authorization callback URL to: <code>https://lms-nextjs-olive.vercel.app/admin/index.html</code></li>
+            <li>Add environment variables in Vercel: <code>GITHUB_CLIENT_ID</code> and <code>GITHUB_CLIENT_SECRET</code></li>
+          </ol>
+          <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#856404' }}>
+            <strong>Alternative:</strong> Use the manual methods below for now.
           </p>
         </div>
         
